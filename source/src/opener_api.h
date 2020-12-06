@@ -1001,4 +1001,6 @@ void CloseSocket(const int socket_handle);
  *
  */
 
+void DisplayAssembly();
+
 #endif /*OPENER_OPENER_API_H_*/

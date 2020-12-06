@@ -151,9 +151,11 @@ EipUint16 SetupIoConnectionOriginatorToTargetConnectionPoint(
       /*wrong connection size */
       connection_object->correct_originator_to_target_size =
         ( (CipByteArray *) attribute->data )->length + diff_size;
+      printf("\x1b[36m11-Error %d %d\x1b[39m\n", ((CipByteArray *) attribute->data )->length, data_size);
       return kConnectionManagerExtendedStatusCodeErrorInvalidOToTConnectionSize;
     }
   } else {
+    printf("\x1b[36m12-Error\x1b[39m\n");
     return kConnectionManagerExtendedStatusCodeInvalidConsumingApplicationPath;
   }
   return kConnectionManagerExtendedStatusCodeSuccess;
@@ -174,17 +176,20 @@ EipUint16 SetupIoConnectionTargetToOriginatorConnectionPoint(
       if( ConnectionObjectGetTToORequestedPacketInterval(io_connection_object)
           !=
           ConnectionObjectGetTToORequestedPacketInterval(iterator) ) {
+        printf("\x1b[36m21-Error\x1b[39m\n");
         return kConnectionManagerExtendedStatusCodeErrorRpiValuesNotAcceptable;
       }
       if( ConnectionObjectGetTToOConnectionSizeType(
             io_connection_object) !=
           ConnectionObjectGetTToOConnectionSizeType(
             iterator) ) {
+        printf("\x1b[36m22-Error\x1b[39m\n");
         return
           kConnectionManagerExtendedStatusCodeMismatchedTToONetworkConnectionFixVar;
       }
       if ( ConnectionObjectGetTToOPriority(io_connection_object) !=
            ConnectionObjectGetTToOPriority(iterator) ) {
+        printf("\x1b[36m23-Error\x1b[39m\n");
         return
           kConnectionManagerExtendedStatusCodeMismatchedTToONetworkConnectionPriority;
       }
@@ -192,6 +197,7 @@ EipUint16 SetupIoConnectionTargetToOriginatorConnectionPoint(
       if( ConnectionObjectGetTransportClassTriggerTransportClass(
             io_connection_object) !=
           ConnectionObjectGetTransportClassTriggerTransportClass(iterator) ) {
+        printf("\x1b[36m24-Error\x1b[39m\n");
         return kConnectionManagerExtendedStatusCodeMismatchedTransportClass;
       }
 
@@ -200,12 +206,14 @@ EipUint16 SetupIoConnectionTargetToOriginatorConnectionPoint(
             io_connection_object) !=
           ConnectionObjectGetTransportClassTriggerProductionTrigger(iterator) )
       {
+        printf("\x1b[36m25-Error\x1b[39m\n");
         return
           kConnectionManagerExtendedStatusCodeMismatchedTToOProductionTrigger;
       }
 
       if( ConnectionObjectGetProductionInhibitTime(io_connection_object) !=
           ConnectionObjectGetProductionInhibitTime(iterator) ) {
+        printf("\x1b[36m26-Error\x1b[39m\n");
         return
           kConnectionManagerExtendedStatusCodeMismatchedTToOProductionInhibitTimeSegment;
       }
@@ -253,9 +261,11 @@ EipUint16 SetupIoConnectionTargetToOriginatorConnectionPoint(
       /*wrong connection size*/
       connection_object->correct_target_to_originator_size =
         ( (CipByteArray *) attribute->data )->length + diff_size;
+      printf("\x1b[36m27-Error %d %d\x1b[39m\n", ( (CipByteArray *) attribute->data )->length, data_size);
       return kConnectionManagerExtendedStatusCodeErrorInvalidTToOConnectionSize;
     }
   } else {
+    printf("\x1b[36m28-Error\x1b[39m\n");
     return kConnectionManagerExtendedStatusCodeInvalidProducingApplicationPath;
   }
   return kConnectionManagerExtendedStatusCodeSuccess;
@@ -282,14 +292,18 @@ CipError EstablishIoConnection(
     connection_object,
     extended_error);
   if(NULL == io_connection_object) {
+    printf("\x1b[36mNull-IO\x1b[39m\n");
     return kCipErrorConnectionFailure;
   }
 
   *extended_error = ProcessProductionInhibitTime(io_connection_object);
 
   if(0 != *extended_error) {
+    printf("\x1b[36mConnection Error\x1b[39m\n");
     return kCipErrorConnectionFailure;
   }
+
+  printf("\x1b[36mNone\x1b[39m\n");
 
   SetIoConnectionCallbacks(io_connection_object);
 
@@ -320,6 +334,7 @@ CipError EstablishIoConnection(
       io_connection_object,
       connection_object);
     if (kConnectionManagerExtendedStatusCodeSuccess != *extended_error) {
+      printf("\x1b[36m1-Error\x1b[39m\n");
       return kCipErrorConnectionFailure;
     }
   }
@@ -330,6 +345,7 @@ CipError EstablishIoConnection(
       io_connection_object,
       connection_object);
     if (kConnectionManagerExtendedStatusCodeSuccess != *extended_error) {
+      printf("\x1b[36m2-Error\x1b[39m\n");
       return kCipErrorConnectionFailure;
     }
   }
@@ -337,6 +353,7 @@ CipError EstablishIoConnection(
   if (NULL != g_config_data_buffer) { /* config data has been sent with this forward open request */
     *extended_error = HandleConfigData(io_connection_object);
     if (kConnectionManagerExtendedStatusCodeSuccess != *extended_error) {
+      printf("\x1b[36m3-Error\x1b[39m\n");
       return kCipErrorConnectionFailure;
     }
   }
@@ -344,6 +361,7 @@ CipError EstablishIoConnection(
   cip_error = OpenCommunicationChannels(io_connection_object);
   if (kCipErrorSuccess != cip_error) {
     *extended_error = 0; /*TODO find out the correct extended error code*/
+    printf("\x1b[36m4-Error\x1b[39m\n");
     return cip_error;
   }
 
@@ -929,8 +947,9 @@ CipError OpenCommunicationChannels(CipConnectionObject *connection_object) {
   {
     if(OpenMulticastConnection(kUdpCommuncationDirectionConsuming,
                                connection_object,
-                               common_packet_format_data) != kEipStatusError) {
+                               common_packet_format_data) != kEipStatusError) {                                 
       OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
+      printf("\x1b[36m41-Error\x1b[39m\n");
       return kCipErrorConnectionFailure;
     }
   } else if(originator_to_target_connection_type ==
@@ -940,6 +959,7 @@ CipError OpenCommunicationChannels(CipConnectionObject *connection_object) {
                                            common_packet_format_data) ==
        kEipStatusError) {
       OPENER_TRACE_ERR("error in PointToPoint consuming connection\n");
+      printf("\x1b[36m42-Error\x1b[39m\n");
       return kCipErrorConnectionFailure;
     }
   }
@@ -951,6 +971,7 @@ CipError OpenCommunicationChannels(CipConnectionObject *connection_object) {
                                         common_packet_format_data) ==
        kEipStatusError) {
       OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
+      printf("\x1b[36m43-Error\x1b[39m\n");
       return kCipErrorConnectionFailure;
     }
   } else if(target_to_originator_connection_type ==
@@ -961,6 +982,7 @@ CipError OpenCommunicationChannels(CipConnectionObject *connection_object) {
                                            common_packet_format_data) !=
        kEipStatusOk) {
       OPENER_TRACE_ERR("error in PointToPoint producing connection\n");
+      printf("\x1b[36m44-Error\x1b[39m\n");
       return kCipErrorConnectionFailure;
     }
   }

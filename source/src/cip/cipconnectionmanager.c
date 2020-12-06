@@ -429,10 +429,12 @@ EipStatus HandleNonNullNonMatchingForwardOpenRequest(
     GetConnectionManagementEntry(                                                           /* Gets correct open connection function for the targeted object */
       g_dummy_connection_object.configuration_path.class_id);
   if(NULL != connection_management_entry) {
+    printf("\x1b[33mEIP CONNECTION\x1b[39m\n");
     temp = connection_management_entry->open_connection_function(
       &g_dummy_connection_object,
       &connection_status);
   } else {
+    printf("\x1b[33mEIP STATUS ERROR\x1b[39m\n");
     temp = kEipStatusError;
     connection_status =
       kConnectionManagerExtendedStatusCodeInconsistentApplicationPathCombo;
@@ -1495,6 +1497,7 @@ GetConnectionManagementEntry(const EipUint32 class_id) {
   ConnectionManagementHandling *connection_management_entry = NULL;
 
   for(size_t i = 0; i < g_kNumberOfConnectableObjects; ++i) {
+    printf("\x1b[35m%d %d\x1b[39m\n", class_id, g_connection_management_list[i].class_id);
     if(class_id == g_connection_management_list[i].class_id) {
       connection_management_entry = &(g_connection_management_list[i]);
       break;

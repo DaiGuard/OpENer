@@ -134,6 +134,7 @@ CipConnectionObject *GetIoConnectionForConnectionData(
     connection_object,
     extended_error);
   if (NULL == io_connection) {
+    printf("\x1b[36mIO-Con NULL\x1b[39m\n");
     if (kConnectionManagerExtendedStatusCodeSuccess == *extended_error) {
       /* we found no connection and don't have an error so try input only next */
       io_connection = GetInputOnlyConnection(connection_object, extended_error);
@@ -148,6 +149,7 @@ CipConnectionObject *GetIoConnectionForConnectionData(
             *extended_error =
               kConnectionManagerExtendedStatusCodeInconsistentApplicationPathCombo;
           } else {
+            printf("\x1b[36mListenOnly\x1b[39m\n");
             ConnectionObjectSetInstanceType(connection_object,
                                             kConnectionObjectInstanceTypeIOListenOnly);
             OPENER_TRACE_INFO("IO Listen only connection requested\n");
@@ -155,6 +157,7 @@ CipConnectionObject *GetIoConnectionForConnectionData(
           }
         }
       } else {
+        printf("\x1b[36mInputOnly\x1b[39m\n");
         ConnectionObjectSetInstanceType(connection_object,
                                         kConnectionObjectInstanceTypeIOInputOnly);
         OPENER_TRACE_INFO("IO Input only connection requested\n");
@@ -162,13 +165,15 @@ CipConnectionObject *GetIoConnectionForConnectionData(
       }
     }
   } else {
+    printf("\x1b[36mExclusiveOwner\x1b[39m\n");
     ConnectionObjectSetInstanceType(connection_object,
                                     kConnectionObjectInstanceTypeIOExclusiveOwner);
     OPENER_TRACE_INFO("IO Exclusive Owner connection requested\n");
     //Is exclusive owner connection
   }
-
+  
   if (NULL != io_connection) {
+    printf("\x1b[36mNot-Null\x1b[39m\n");
     ConnectionObjectDeepCopy(io_connection, connection_object);
   }
 
@@ -180,6 +185,11 @@ CipConnectionObject *GetExclusiveOwnerConnection(
   EipUint16 *const extended_error) {
 
   for (size_t i = 0; i < OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS; ++i) {
+    printf("\x1b[36mCON: %d %d %d %d %d %d\x1b[39m\n",
+          g_exlusive_owner_connections[i].output_assembly, connection_object->consumed_path.instance_id,
+          g_exlusive_owner_connections[i].input_assembly, connection_object->produced_path.instance_id,
+          g_exlusive_owner_connections[i].config_assembly, connection_object->configuration_path.instance_id);
+
     if ( (g_exlusive_owner_connections[i].output_assembly ==
           connection_object->consumed_path.instance_id)
          && (g_exlusive_owner_connections[i].input_assembly ==
@@ -192,7 +202,7 @@ CipConnectionObject *GetExclusiveOwnerConnection(
         GetConnectedOutputAssembly(
           connection_object->produced_path.instance_id);
       if ( NULL
-           != exclusive_owner ) {
+           != exclusive_owner ) {        
         if(kConnectionObjectStateEstablished ==
            ConnectionObjectGetState(exclusive_owner) ) {
           *extended_error =

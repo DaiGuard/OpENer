@@ -588,6 +588,7 @@ void ConnectionObjectSetInitialInactivityWatchdogTimerValue(
     (calculated_timeout_value >
      kMinimumInitialTimeoutValue) ? calculated_timeout_value :
     kMinimumInitialTimeoutValue;
+  printf("timeout: %d %d\n", calculated_timeout_value, kMinimumInitialTimeoutValue);
 }
 
 void ConnectionObjectResetInactivityWatchdogTimerValue(

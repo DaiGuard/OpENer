@@ -34,6 +34,25 @@ EipUint8 g_assembly_data096[32]; /* Output */
 EipUint8 g_assembly_data097[10]; /* Config */
 EipUint8 g_assembly_data09A[32]; /* Explicit */
 
+
+
+void DisplayAssembly()
+{
+  printf("i: ");
+  for(int i=0; i<32; i++)
+  {
+    printf("%02x, ", g_assembly_data064[i]);
+  }
+  printf("\n");
+
+  printf("o: ");
+  for(int i=0; i<32; i++)
+  {
+    printf("%02x, ", g_assembly_data096[i]);
+  }
+  printf("\n");
+}
+
 /* local functions */
 
 /* global functions called by the stack */

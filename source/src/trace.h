@@ -10,6 +10,12 @@
  * @brief Tracing infrastructure for OpENer
  */
 
+#include <stdio.h>
+
+#define OPENER_WITH_TRACES
+#define OPENER_TRACE_LEVEL 0x0f
+#define LOG_TRACE(...) printf(__VA_ARGS__)
+
 #ifdef OPENER_WITH_TRACES
 
 #ifndef OPENER_BUILD_SHARED_LIBS

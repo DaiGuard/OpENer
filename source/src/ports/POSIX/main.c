@@ -273,6 +273,8 @@ static void *executeEventLoop(void *pthread_arg) {
       OPENER_TRACE_ERR("Error in NetworkHandler loop! Exiting OpENer!\n");
       break;
     }
+
+    DisplayAssembly();
   }
 
   return &pthread_dummy_ret;
